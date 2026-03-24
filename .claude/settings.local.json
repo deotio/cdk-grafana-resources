@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__aws-iac__cdk_best_practices",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(npx jest:*)",
+      "Bash(xargs ls:*)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git -C /Users/rmyers/repos/dot/cdk-grafana-resources add -A)"
+    ]
+  }
+}

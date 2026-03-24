@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# TypeScript compiled output (in lib/)
+lib/**/*.js
+lib/**/*.d.ts
+lib/**/*.js.map
+lib/**/*.d.ts.map
+
+# Build artifacts
+*.tsbuildinfo
+cdk.out/
+
+# Test coverage
+coverage/
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Project-specific
+.doc-search-index
+.mcp.json

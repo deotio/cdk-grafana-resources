@@ -1,0 +1,54 @@
+{
+  "name": "cdk-grafana-resources",
+  "version": "0.1.0",
+  "description": "AWS CDK constructs for managing Grafana dashboards, alerts, and other resources via the HTTP API",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "lambda/**/*.ts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint 'lib/**/*.ts' 'lambda/**/*.ts' 'test/**/*.ts'",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.100.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1015.0",
+    "@aws-sdk/client-secrets-manager": "^3.1015.0",
+    "@types/aws-lambda": "^8.10.0",
+    "@types/jest": "^29.0.0",
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "aws-cdk-lib": "^2.100.0",
+    "cdk-nag": "^2.0.0",
+    "constructs": "^10.0.0",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "prettier": "^3.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "aws",
+    "cdk",
+    "grafana",
+    "dashboard",
+    "alerting",
+    "observability",
+    "infrastructure-as-code"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deotio/cdk-grafana-resources.git"
+  }
+}
