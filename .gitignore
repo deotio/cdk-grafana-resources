@@ -22,3 +22,4 @@ coverage/
 # Project-specific
 .doc-search-index
 .mcp.json
+.claude/
