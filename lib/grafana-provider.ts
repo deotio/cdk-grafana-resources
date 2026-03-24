@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -7,6 +8,23 @@ import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
+
+/**
+ * Finds the package root by walking up from the given directory until
+ * package.json is found. Works whether __dirname is lib/ (ts-jest)
+ * or dist/lib/ (compiled).
+ */
+function findPackageRoot(startDir: string): string {
+  let dir = startDir;
+  while (!fs.existsSync(path.join(dir, 'package.json'))) {
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      throw new Error('Could not find package root (no package.json found)');
+    }
+    dir = parent;
+  }
+  return dir;
+}
 
 /**
  * Configuration for the shared Custom Resource provider Lambda.
@@ -75,7 +93,7 @@ export class GrafanaProvider extends Construct {
     super(scope, id);
 
     this.handler = new NodejsFunction(this, 'Handler', {
-      entry: path.join(__dirname, '..', 'lambda', 'grafana-provider', 'index.ts'),
+      entry: path.join(findPackageRoot(__dirname), 'lambda', 'grafana-provider', 'index.ts'),
       runtime: Runtime.NODEJS_22_X,
       handler: 'onEvent',
       timeout: cdk.Duration.minutes(5),

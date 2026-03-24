@@ -2,11 +2,11 @@
   "name": "cdk-grafana-resources",
   "version": "0.1.0",
   "description": "AWS CDK constructs for managing Grafana dashboards, alerts, and other resources via the HTTP API",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "files": [
-    "lib/**/*.js",
-    "lib/**/*.d.ts",
+    "dist/lib/**/*.js",
+    "dist/lib/**/*.d.ts",
     "lambda/**/*.ts"
   ],
   "scripts": {

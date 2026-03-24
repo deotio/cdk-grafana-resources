@@ -1,11 +1,13 @@
 # Dependencies
 node_modules/
 
-# TypeScript compiled output (in lib/)
-lib/**/*.js
-lib/**/*.d.ts
-lib/**/*.js.map
-lib/**/*.d.ts.map
+# TypeScript compiled output
+dist/
+*.js
+*.d.ts
+*.js.map
+*.d.ts.map
+!jest.config.js
 
 # Build artifacts
 *.tsbuildinfo
