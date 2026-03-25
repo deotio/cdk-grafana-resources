@@ -139,5 +139,59 @@ describe('api-version registry', () => {
         repeat_interval: '4h',
       });
     });
+
+    test('buildBody passes through policy', () => {
+      const policy = { receiver: 'test' };
+      expect(np.buildBody({ policy })).toBe(policy);
+    });
+
+    test('parseResponse returns empty object', () => {
+      expect(np.parseResponse({ anything: 'ignored' })).toEqual({});
+    });
+  });
+
+  describe('v10 contactPoint profile', () => {
+    const cp = getApiProfile('v10').contactPoint;
+
+    test('buildBody assembles uid, name, type, settings', () => {
+      const body = cp.buildBody({ uid: 'cp1', name: 'Test', type: 'slack', settings: { url: 'https://hooks.slack.com' } });
+      expect(body).toEqual({ uid: 'cp1', name: 'Test', type: 'slack', settings: { url: 'https://hooks.slack.com' } });
+    });
+
+    test('parseResponse returns empty object', () => {
+      expect(cp.parseResponse({})).toEqual({});
+    });
+
+    test('routes encode uid in paths', () => {
+      expect(cp.routes.update.path('https://g.example.com', 'a/b')).toBe(
+        'https://g.example.com/api/v1/provisioning/contact-points/a%2Fb',
+      );
+    });
+  });
+
+  describe('v10 alertRule profile', () => {
+    const ar = getApiProfile('v10').alertRule;
+
+    test('buildBody passes through rule', () => {
+      const rule = { uid: 'r1', condition: 'A' };
+      expect(ar.buildBody({ rule })).toBe(rule);
+    });
+
+    test('parseResponse returns empty object', () => {
+      expect(ar.parseResponse({})).toEqual({});
+    });
+  });
+
+  describe('v10 datasource profile', () => {
+    const ds = getApiProfile('v10').datasource;
+
+    test('buildBody passes through body', () => {
+      const body = { uid: 'ds1', name: 'Test' };
+      expect(ds.buildBody({ body })).toBe(body);
+    });
+
+    test('parseResponse extracts DatasourceId', () => {
+      expect(ds.parseResponse({ id: 7 })).toEqual({ DatasourceId: '7' });
+    });
   });
 });

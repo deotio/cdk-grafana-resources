@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { GrafanaFolder } from '../lib/grafana-folder';
+import { validateEndpoint, validateUid } from '../lib/validation';
 
 function makeStack() {
   const app = new cdk.App();
@@ -56,5 +57,17 @@ describe('Security validation', () => {
         title: 'Bad',
       });
     }).toThrow(/Invalid uid/);
+  });
+
+  test('CDK Token endpoint skips synth-time validation', () => {
+    expect(() => {
+      validateEndpoint(cdk.Token.asString({ Ref: 'SomeParam' }));
+    }).not.toThrow();
+  });
+
+  test('CDK Token uid skips synth-time validation', () => {
+    expect(() => {
+      validateUid(cdk.Token.asString({ Ref: 'SomeParam' }));
+    }).not.toThrow();
   });
 });

@@ -92,6 +92,13 @@ export class GrafanaProvider extends Construct {
   private constructor(scope: Construct, id: string, props?: GrafanaProviderProps) {
     super(scope, id);
 
+    const retention = props?.logRetention ?? logs.RetentionDays.ONE_WEEK;
+
+    const handlerLogGroup = new logs.LogGroup(this, 'HandlerLogs', {
+      retention,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     this.handler = new NodejsFunction(this, 'Handler', {
       entry: path.join(findPackageRoot(__dirname), 'lambda', 'grafana-provider', 'index.ts'),
       runtime: Runtime.NODEJS_22_X,
@@ -99,7 +106,7 @@ export class GrafanaProvider extends Construct {
       timeout: cdk.Duration.minutes(5),
       memorySize: 256,
       description: 'cdk-grafana-resources: manages Grafana resources via HTTP API',
-      logRetention: props?.logRetention ?? logs.RetentionDays.ONE_WEEK,
+      logGroup: handlerLogGroup,
       bundling: {
         externalModules: ['@aws-sdk/*'],
       },
@@ -109,9 +116,14 @@ export class GrafanaProvider extends Construct {
       securityGroups: props?.securityGroups,
     });
 
+    const frameworkLogGroup = new logs.LogGroup(this, 'FrameworkLogs', {
+      retention,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     this.provider = new Provider(this, 'Provider', {
       onEventHandler: this.handler,
-      logRetention: props?.logRetention ?? logs.RetentionDays.ONE_WEEK,
+      logGroup: frameworkLogGroup,
     });
   }
 

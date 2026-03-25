@@ -68,25 +68,49 @@ describe('cdk-nag AwsSolutions', () => {
       policyJson: '{"receiver":"default"}',
     });
 
-    // Suppress known CDK framework issues
-    NagSuppressions.addStackSuppressions(stack, [
+    // Suppress known CDK framework issues — scoped to the provider construct
+    const providerPath = '/NagTestStack/GrafanaCustomResourceProvider';
+
+    NagSuppressions.addResourceSuppressionsByPath(stack, [
+      `${providerPath}/Handler/ServiceRole/Resource`,
+      `${providerPath}/Provider/framework-onEvent/ServiceRole/Resource`,
+    ], [
       {
         id: 'AwsSolutions-IAM4',
-        reason: 'CDK-managed Lambda execution role uses AWS managed policy',
+        reason: 'CDK-managed Lambda execution role uses AWS managed policy (AWSLambdaBasicExecutionRole)',
       },
+    ]);
+
+    NagSuppressions.addResourceSuppressionsByPath(stack, [
+      `${providerPath}/Handler/ServiceRole/DefaultPolicy/Resource`,
+      `${providerPath}/Provider/framework-onEvent/ServiceRole/DefaultPolicy/Resource`,
+    ], [
       {
         id: 'AwsSolutions-IAM5',
-        reason: 'Wildcard permissions are from CDK grant methods (S3 assets, secrets)',
+        reason: 'Wildcard permissions from CDK grant methods for S3 asset reads and Secrets Manager access',
       },
+    ]);
+
+    NagSuppressions.addResourceSuppressionsByPath(stack, [
+      `${providerPath}/Handler/Resource`,
+      `${providerPath}/Provider/framework-onEvent/Resource`,
+    ], [
       {
         id: 'AwsSolutions-L1',
-        reason: 'Lambda runtime is set to NODEJS_22_X which may not be latest in cdk-nag checks',
+        reason: 'Lambda runtime is NODEJS_22_X; cdk-nag may not recognise it as latest',
       },
+    ]);
+
+    // Test secrets do not require rotation
+    NagSuppressions.addResourceSuppressionsByPath(stack, [
+      '/NagTestStack/Token/Resource',
+      '/NagTestStack/SecureJson/Resource',
+    ], [
       {
         id: 'AwsSolutions-SMG4',
         reason: 'Test secrets do not require rotation for unit tests',
       },
-    ], true);
+    ]);
 
     Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
 

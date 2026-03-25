@@ -45,7 +45,7 @@ describe('GrafanaProvider', () => {
     expect(handlerCount).toBe(1);
   });
 
-  test('log retention is set on the handler Lambda', () => {
+  test('log groups are created with retention', () => {
     const { stack, secret } = makeStack();
 
     new GrafanaFolder(stack, 'F1', {
@@ -56,9 +56,9 @@ describe('GrafanaProvider', () => {
     });
 
     const template = Template.fromStack(stack);
-    // LogRetention custom resource should exist (CDK creates AWS::Custom::LogRetention)
-    template.hasResourceProperties('Custom::LogRetention', {
-      RetentionInDays: 7, // ONE_WEEK
+    // Explicit log groups should exist with ONE_WEEK retention (7 days)
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      RetentionInDays: 7,
     });
   });
 
