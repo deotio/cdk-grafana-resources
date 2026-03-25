@@ -14,12 +14,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm audit --audit-level=high
       - run: npm run lint
       - run: npm run build
       - run: npm test
-      # Authenticates via npm Trusted Publishing (OIDC) — no tokens needed.
-      # The npm CLI auto-detects the GitHub Actions OIDC environment.
+      # Configure npm for OIDC trusted publishing (no token needed).
+      # Do NOT use setup-node's registry-url — it injects NODE_AUTH_TOKEN
+      # which overrides OIDC authentication.
+      - run: echo "//registry.npmjs.org/:_authToken=" > ~/.npmrc
       - run: npm publish --provenance --access public
