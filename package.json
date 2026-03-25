@@ -1,5 +1,5 @@
 {
-  "name": "cdk-grafana-resources",
+  "name": "@deotio/cdk-grafana-resources",
   "version": "0.1.0",
   "description": "AWS CDK constructs for managing Grafana dashboards, alerts, and other resources via the HTTP API",
   "main": "dist/lib/index.js",
