@@ -20,9 +20,4 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm test
-      # Uses npm Trusted Publishing (OIDC) when configured on npmjs.com.
-      # Falls back to NPM_TOKEN secret for the initial bootstrap publish
-      # before Trusted Publishing can be enabled.
       - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
