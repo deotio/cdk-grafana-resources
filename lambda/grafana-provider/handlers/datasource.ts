@@ -2,6 +2,7 @@ import type { CdkCustomResourceResponse } from 'aws-lambda';
 import { grafanaFetch } from '../grafana-client';
 import { getToken } from '../token';
 import { downloadAsset } from '../s3-asset';
+import { safeJsonParse } from '../json-parse';
 import type { ResourceProfile } from '../api-version';
 
 export async function handleDatasource(
@@ -35,19 +36,19 @@ export async function handleDatasource(
 
   // jsonDataJson is inline (non-sensitive, small)
   if (props.JsonDataJson) {
-    body.jsonData = JSON.parse(props.JsonDataJson);
+    body.jsonData = safeJsonParse(props.JsonDataJson, 'jsonDataJson');
   }
 
   // secureJsonData: resolved from Secrets Manager OR S3 asset
   if (props.SecureJsonDataSecretArn) {
     const secretValue = await getToken(props.SecureJsonDataSecretArn);
-    body.secureJsonData = JSON.parse(secretValue);
+    body.secureJsonData = safeJsonParse(secretValue, 'secureJsonData from Secrets Manager');
   } else if (props.SecureJsonDataAssetBucket) {
     const assetValue = await downloadAsset(
       props.SecureJsonDataAssetBucket,
       props.SecureJsonDataAssetKey,
     );
-    body.secureJsonData = JSON.parse(assetValue);
+    body.secureJsonData = safeJsonParse(assetValue, 'secureJsonData from S3 asset');
   }
 
   const builtBody = profile.buildBody({ body });

@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import * as crypto from 'crypto';
+import * as cdk from 'aws-cdk-lib';
 
 const VALID_ENDPOINT = /^[a-zA-Z0-9.-]+(:[0-9]+)?$/;
 const VALID_UID = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
@@ -10,8 +11,12 @@ const VALID_UID = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
  * Validates a Grafana endpoint string.
  * Must be a hostname with optional port — no path, query string, or userinfo.
  * Prevents SSRF via path injection.
+ *
+ * Skipped for unresolved CDK Tokens (e.g., SSM parameters) — the Lambda
+ * handler performs the same validation at deploy time.
  */
 export function validateEndpoint(endpoint: string): void {
+  if (cdk.Token.isUnresolved(endpoint)) return;
   if (!VALID_ENDPOINT.test(endpoint)) {
     throw new Error(
       `Invalid grafanaEndpoint: must be a hostname (optional port), got: '${endpoint}'`,
@@ -23,8 +28,12 @@ export function validateEndpoint(endpoint: string): void {
  * Validates a Grafana resource UID.
  * Must start with alphanumeric and contain only alphanumeric, underscore, or hyphen.
  * Prevents URL path traversal when interpolated into API paths.
+ *
+ * Skipped for unresolved CDK Tokens — the Lambda handler uses
+ * encodeURIComponent as a defence-in-depth measure.
  */
 export function validateUid(uid: string): void {
+  if (cdk.Token.isUnresolved(uid)) return;
   if (!VALID_UID.test(uid)) {
     throw new Error(
       `Invalid uid: must match /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/, got: '${uid}'`,

@@ -72,6 +72,8 @@ export class GrafanaDashboard extends Construct {
 
     if (props.folderUid instanceof GrafanaFolder) {
       this.node.addDependency(props.folderUid);
+    } else {
+      validateUid(resolvedFolderUid);
     }
 
     // Upload dashboard JSON as S3 asset

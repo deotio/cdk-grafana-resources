@@ -1,19 +1,9 @@
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { GrafanaProviderProps } from './grafana-provider';
+import type { GrafanaApiVersion } from '../lambda/grafana-provider/api-version';
 
-/**
- * Supported Grafana API version identifiers.
- *
- * - `'v10'` — Grafana 10.x and Amazon Managed Grafana (as of 2025).
- * - `'v11'` — Grafana 11.x (currently identical to v10; will diverge
- *   when Grafana 11 introduces breaking API changes).
- *
- * The version controls which API paths, request shapes, and response
- * parsers the Lambda handler uses. Adding support for a future Grafana
- * version requires only updating the API profile registry in
- * `lambda/grafana-provider/api-version.ts`.
- */
-export type GrafanaApiVersion = 'v10' | 'v11';
+// Re-export so consumers can import from the construct library
+export type { GrafanaApiVersion } from '../lambda/grafana-provider/api-version';
 
 /**
  * Base properties shared by all Grafana resource constructs.

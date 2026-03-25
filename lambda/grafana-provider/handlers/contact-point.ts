@@ -1,6 +1,7 @@
 import type { CdkCustomResourceResponse } from 'aws-lambda';
 import { grafanaFetch } from '../grafana-client';
 import { downloadAsset } from '../s3-asset';
+import { safeJsonParse } from '../json-parse';
 import type { ResourceProfile } from '../api-version';
 
 export async function handleContactPoint(
@@ -28,7 +29,7 @@ export async function handleContactPoint(
     props.SettingsAssetBucket,
     props.SettingsAssetKey,
   );
-  const settings = JSON.parse(settingsStr);
+  const settings = safeJsonParse(settingsStr, 'contact point settings from S3 asset');
 
   const body = profile.buildBody({ uid, name: props.Name, type: props.Type, settings });
 

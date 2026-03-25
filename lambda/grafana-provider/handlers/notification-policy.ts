@@ -1,5 +1,7 @@
 import type { CdkCustomResourceResponse } from 'aws-lambda';
 import { grafanaFetch } from '../grafana-client';
+import { downloadAsset } from '../s3-asset';
+import { safeJsonParse } from '../json-parse';
 import type { ResourceProfile } from '../api-version';
 
 export async function handleNotificationPolicy(
@@ -26,8 +28,12 @@ export async function handleNotificationPolicy(
     return { PhysicalResourceId: 'notification-policy' };
   }
 
-  // Create or Update — full replacement
-  const policy = JSON.parse(props.PolicyJson);
+  // Create or Update — read policy JSON from S3 asset
+  const policyStr = await downloadAsset(
+    props.PolicyAssetBucket,
+    props.PolicyAssetKey,
+  );
+  const policy = safeJsonParse(policyStr, 'notification policy JSON from S3 asset');
   const body = profile.buildBody({ policy });
   const route = action === 'Create' ? profile.routes.create : profile.routes.update;
 

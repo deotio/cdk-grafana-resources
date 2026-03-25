@@ -1,8 +1,9 @@
 import * as cdk from 'aws-cdk-lib';
+import * as s3_assets from 'aws-cdk-lib/aws-s3-assets';
 import { Construct } from 'constructs';
 import { GrafanaResourceProps } from './grafana-resource-props';
 import { GrafanaProvider } from './grafana-provider';
-import { validateEndpoint } from './validation';
+import { validateEndpoint, writeJsonToTempFile } from './validation';
 
 /**
  * Properties for a GrafanaNotificationPolicy construct.
@@ -32,6 +33,13 @@ export class GrafanaNotificationPolicy extends Construct {
     const provider = GrafanaProvider.getOrCreate(this, props.providerProps);
     provider.grantSecretRead(props.apiTokenSecret);
 
+    // Upload policy JSON as S3 asset to avoid CloudFormation property size
+    // limits and to keep routing rules out of CloudFormation state.
+    const asset = new s3_assets.Asset(this, 'PolicyAsset', {
+      path: writeJsonToTempFile(props.policyJson),
+    });
+    asset.grantRead(provider.handler);
+
     new cdk.CustomResource(this, 'Resource', {
       serviceToken: provider.provider.serviceToken,
       properties: {
@@ -39,7 +47,8 @@ export class GrafanaNotificationPolicy extends Construct {
         GrafanaEndpoint: props.grafanaEndpoint,
         GrafanaApiVersion: props.grafanaApiVersion,
         SecretArn: props.apiTokenSecret.secretArn,
-        PolicyJson: props.policyJson,
+        PolicyAssetBucket: asset.s3BucketName,
+        PolicyAssetKey: asset.s3ObjectKey,
       },
     });
   }

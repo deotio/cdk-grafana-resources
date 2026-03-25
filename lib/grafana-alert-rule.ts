@@ -60,6 +60,8 @@ export class GrafanaAlertRule extends Construct {
 
     if (props.folderUid instanceof GrafanaFolder) {
       this.node.addDependency(props.folderUid);
+    } else {
+      validateUid(resolvedFolderUid);
     }
 
     // Upload rule JSON as S3 asset

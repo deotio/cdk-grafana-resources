@@ -1,6 +1,7 @@
 import type { CdkCustomResourceResponse } from 'aws-lambda';
 import { grafanaFetch } from '../grafana-client';
 import { downloadAsset } from '../s3-asset';
+import { safeJsonParse } from '../json-parse';
 import type { ResourceProfile } from '../api-version';
 
 export async function handleAlertRule(
@@ -25,7 +26,7 @@ export async function handleAlertRule(
 
   // Read rule JSON from S3 asset
   const ruleJsonStr = await downloadAsset(props.RuleAssetBucket, props.RuleAssetKey);
-  const rule = JSON.parse(ruleJsonStr);
+  const rule = safeJsonParse(ruleJsonStr, 'alert rule JSON from S3 asset') as Record<string, unknown>;
   rule.uid = uid;
   rule.folderUID = props.FolderUid;
   rule.ruleGroup = props.RuleGroup;

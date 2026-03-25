@@ -7,6 +7,7 @@
   "files": [
     "dist/lib/**/*.js",
     "dist/lib/**/*.d.ts",
+    "dist/lib/**/*.d.ts.map",
     "lambda/**/*.ts"
   ],
   "scripts": {
@@ -46,7 +47,17 @@
     "observability",
     "infrastructure-as-code"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "license": "Apache-2.0",
+  "homepage": "https://github.com/deotio/cdk-grafana-resources#readme",
+  "bugs": {
+    "url": "https://github.com/deotio/cdk-grafana-resources/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/deotio/cdk-grafana-resources.git"

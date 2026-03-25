@@ -1,6 +1,7 @@
 import type { CdkCustomResourceResponse } from 'aws-lambda';
 import { grafanaFetch } from '../grafana-client';
 import { downloadAsset } from '../s3-asset';
+import { safeJsonParse } from '../json-parse';
 import type { ResourceProfile } from '../api-version';
 
 export async function handleDashboard(
@@ -28,7 +29,7 @@ export async function handleDashboard(
     props.DashboardAssetBucket,
     props.DashboardAssetKey,
   );
-  const dashboard = JSON.parse(dashboardJson);
+  const dashboard = safeJsonParse(dashboardJson, 'dashboard JSON from S3 asset') as Record<string, unknown>;
   dashboard.uid = uid;
   dashboard.id = null;
 

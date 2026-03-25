@@ -13,19 +13,19 @@ function makeStack() {
 }
 
 describe('GrafanaNotificationPolicy', () => {
-  test('PolicyJson inline in template', () => {
+  test('PolicyJson uploaded as S3 asset', () => {
     const { stack, secret } = makeStack();
-    const policyJson = '{"receiver":"default","routes":[]}';
 
     new GrafanaNotificationPolicy(stack, 'NP', {
       grafanaEndpoint: ENDPOINT,
       apiTokenSecret: secret,
-      policyJson,
+      policyJson: '{"receiver":"default","routes":[]}',
     });
 
     const template = Template.fromStack(stack);
     template.hasResourceProperties('AWS::CloudFormation::CustomResource', {
-      PolicyJson: policyJson,
+      PolicyAssetBucket: Match.anyValue(),
+      PolicyAssetKey: Match.anyValue(),
     });
   });
 

@@ -30,7 +30,14 @@ export async function grafanaFetch(
 
     if (response.ok) {
       const text = await response.text();
-      return text ? JSON.parse(text) : {};
+      if (!text) return {};
+      try {
+        return JSON.parse(text);
+      } catch {
+        throw new Error(
+          `Grafana API returned non-JSON response (${init.method} ${url}): ${text.slice(0, 200)}`,
+        );
+      }
     }
 
     // 4xx — client errors, never retry
