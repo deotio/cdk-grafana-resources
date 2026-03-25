@@ -20,4 +20,6 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm test
+      # Authenticates via npm Trusted Publishing (OIDC) — no tokens needed.
+      # The npm CLI auto-detects the GitHub Actions OIDC environment.
       - run: npm publish --provenance --access public
