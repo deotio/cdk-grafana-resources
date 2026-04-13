@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "prepare": "tsc",
     "test": "jest",
     "lint": "eslint 'lib/**/*.ts' 'lambda/**/*.ts' 'test/**/*.ts'",
     "prepublishOnly": "npm run build && npm run test"
